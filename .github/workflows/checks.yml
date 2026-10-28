@@ -1,0 +1,51 @@
+name: Formula checks and bottles
+on:
+  push:
+    paths: ['Formula/**', '.github/workflows/**']
+  pull_request:
+    paths: ['Formula/**', '.github/workflows/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: formula-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      HOMEBREW_NO_INSTALL_CLEANUP: '1'
+      HOMEBREW_MAKE_JOBS: '3'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Register this formula
+        run: |
+          brew tap koomean/tap
+          if brew help trust >/dev/null 2>&1; then
+            brew trust --formula koomean/tap/avclean
+          fi
+          cp Formula/avclean.rb "$(brew --repository koomean/tap)/Formula/avclean.rb"
+      - name: Formula syntax
+        run: brew ruby -c Formula/avclean.rb
+      - name: Build the pinned sources
+        run: brew install --build-bottle koomean/tap/avclean
+      - name: Offline integration and linkage
+        run: |
+          brew test koomean/tap/avclean
+          brew linkage --test koomean/tap/avclean
+      - name: Bottle
+        run: |
+          mkdir bottles
+          cd bottles
+          brew bottle --json --no-rebuild koomean/tap/avclean
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: avclean-${{ matrix.os }}
+          path: bottles/*
+          if-no-files-found: error
