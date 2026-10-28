@@ -32,7 +32,7 @@ jobs:
           fi
           cp Formula/avclean.rb "$(brew --repository koomean/tap)/Formula/avclean.rb"
       - name: Formula syntax
-        run: brew ruby -c Formula/avclean.rb
+        run: brew ruby -- -c Formula/avclean.rb
       - name: Build the pinned sources
         run: brew install --build-bottle koomean/tap/avclean
       - name: Offline integration and linkage
