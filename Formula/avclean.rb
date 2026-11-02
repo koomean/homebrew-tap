@@ -4,6 +4,7 @@ class Avclean < Formula
   url "https://github.com/koomean/avclean/archive/refs/tags/v2.1.0.tar.gz"
   sha256 "91119c72294c03eb68e71a4a9dd40ba9dc6e217fc907a89276ca68b23f698d9f"
   license all_of: ["MIT", "GPL-2.0-or-later", "curl"]
+  revision 1
 
   depends_on "cmake" => :build
   depends_on "pkgconf" => :build
@@ -104,6 +105,15 @@ class Avclean < Formula
       (pkgshare/"licenses/clamav/mspack").install "libclammspack/COPYING.LIB"
     end
 
+    # Both programs parse their default configuration even for --version.
+    # Scans and updates use the application's explicit per-user configuration.
+    %w[clamd freshclam].each do |program|
+      (runtime/"etc/#{program}.conf").write <<~CONF
+        # avclean supplies an explicit private configuration when running #{program}.
+        # This intentionally empty default supports version and diagnostic queries.
+      CONF
+    end
+
     libexec.install "bin/av"
     (libexec/"lib").install "lib/av_engine.py"
     prefix.install "README.md", "LICENSE"
@@ -115,7 +125,7 @@ class Avclean < Formula
       export AV_CLAMD_BIN="#{runtime}/sbin/clamd"
       export AV_CLAMSCAN_BIN="#{runtime}/bin/clamscan"
       export AV_FRESHCLAM_BIN="#{runtime}/bin/freshclam"
-      export AV_PYTHON="#{Formula["python@3.14"].opt_libexec}/bin/python3"
+      export AV_PYTHON="#{Formula["python@3.14"].opt_bin}/python3.14"
       exec "#{libexec}/av" "$@"
     SH
     chmod 0555, bin/"av"
@@ -132,6 +142,8 @@ class Avclean < Formula
 
   test do
     ENV["AV_SELF_TEST_TMPDIR"] = testpath.to_s
+    assert_path_exists libexec/"lib/av_engine.py"
+    assert_predicate Formula["python@3.14"].opt_bin/"python3.14", :executable?
     assert_match "avclean #{version} (av)", shell_output("#{bin}/av --version")
     assert_match "Usage:", shell_output("#{bin}/av --help")
     system bin/"av", "--self-test"
