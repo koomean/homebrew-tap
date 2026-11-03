@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir bottles
           cd bottles
-          brew bottle --json --no-rebuild --root-url=https://github.com/koomean/avclean/releases/download/v2.1.0 koomean/tap/avclean
+          brew bottle --json --no-rebuild --root-url=https://github.com/koomean/avclean/releases/download/v2.1.1 koomean/tap/avclean
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: avclean-${{ matrix.os }}

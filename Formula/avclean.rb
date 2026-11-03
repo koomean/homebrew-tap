@@ -1,16 +1,9 @@
 class Avclean < Formula
   desc "On-demand ClamAV menu for macOS with a private scanning engine"
   homepage "https://github.com/koomean/avclean"
-  url "https://github.com/koomean/avclean/archive/refs/tags/v2.1.0.tar.gz"
-  sha256 "91119c72294c03eb68e71a4a9dd40ba9dc6e217fc907a89276ca68b23f698d9f"
+  url "https://github.com/koomean/avclean/archive/refs/tags/v2.1.1.tar.gz"
+  sha256 "71571e22868dd59e06926cada7761403ad6017395d3b38a20a2c274782673f37"
   license all_of: ["MIT", "GPL-2.0-or-later", "curl"]
-
-  revision 1
-  bottle do
-    root_url "https://github.com/koomean/avclean/releases/download/v2.1.0"
-    sha256 cellar: "/opt/homebrew/Cellar", arm64_tahoe:   "af1bab988b1655c1d63d961bc16507e97496825ef9d3c93e59cd2b9061de788c"
-    sha256 cellar: "/opt/homebrew/Cellar", arm64_sequoia: "9498e4a02b663421e221dde2f8fe19cf2b9f5e9ec28913f8f21b5849caebde27"
-  end
 
   depends_on "cmake" => :build
   depends_on "pkgconf" => :build
