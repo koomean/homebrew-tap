@@ -5,6 +5,12 @@ class Avclean < Formula
   sha256 "334a86e91d4c4acb18f4b14cc5da89b3609db9c26b1dfa1919347bd9657336a7"
   license all_of: ["MIT", "GPL-2.0-or-later", "curl"]
 
+  bottle do
+    root_url "https://github.com/koomean/avclean/releases/download/v2.1.2"
+    sha256 cellar: "/opt/homebrew/Cellar", arm64_tahoe:   "b55c941d224a4a03ab0cdcf645460d4290f1b1447837ffa55c07ba9a83d985d6"
+    sha256 cellar: "/opt/homebrew/Cellar", arm64_sequoia: "3fa940b6e18101863b4061ce118da9cb87fffbd2c841ccef24cf3de307570731"
+  end
+
   depends_on "cmake" => :build
   depends_on "pkgconf" => :build
   depends_on "rust" => :build
